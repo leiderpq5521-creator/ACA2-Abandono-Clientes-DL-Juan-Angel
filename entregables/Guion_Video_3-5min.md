@@ -8,7 +8,7 @@
 **Duración estimada:** ≈ 4.3 min (585 palabras a ≈ 135 palabras/min).
 **Enlaces para la demo:**
 - App: (por publicar)
-- Código: (por publicar)
+- Código: https://github.com/leiderpq5521-creator/ACA2-Abandono-Clientes-DL
 - Póster: `entregables/Poster_ACA2_Ventas_DL.pdf`
 
 > **Antes de grabar:** abre la app unos minutos antes (en Streamlit Cloud tarda ≈ 30 s en «despertar» si estuvo inactiva) y deja listo el póster en PDF.
