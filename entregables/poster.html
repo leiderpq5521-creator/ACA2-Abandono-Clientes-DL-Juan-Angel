@@ -1,0 +1,62 @@
+<!doctype html><html lang=es><head><meta charset=utf-8><title>Póster ACA 2 – Abandono de clientes con Deep Learning</title><style>.wrap{zoom:0.84}
+@page{size:297mm 420mm;margin:0}
+*{box-sizing:border-box}html{background:#cfd6e0}body{margin:6mm auto;width:297mm;min-height:420mm;font-family:'Segoe UI','DejaVu Sans',sans-serif;color:#1d2433;background:#f6f4f1;font-size:9.1pt;box-shadow:0 2px 12px #0004}@media print{html{background:none}body{margin:0;height:420mm;overflow:hidden;box-shadow:none}}
+header{background:linear-gradient(135deg,#1d2f4f,#1B7F79);color:#fff;padding:6mm 10mm 4.5mm;display:flex;gap:6mm;align-items:center}header .tit{flex:1}header .lk a{color:#fff;text-decoration:underline}header .lk{width:80mm;background:#E07A1F;border-radius:2.5mm;padding:2.5mm 3.5mm;font-size:8pt;line-height:1.35;word-break:break-all}
+h1{margin:0;font-size:19pt;line-height:1.12}header p{margin:2mm 0 0;font-size:9pt;opacity:.93}
+.wrap{padding:4mm 10mm}.row{display:flex;gap:4mm;margin-bottom:3mm}.mb{margin-bottom:3mm}
+.card{background:#fff;border-radius:3mm;padding:2.8mm 3.8mm;box-shadow:0 1px 3px #0002;flex:1;min-width:0}
+.card h2{margin:0 0 2mm;font-size:11.5pt;color:#1d2f4f;border-left:2mm solid #E07A1F;padding-left:2.5mm}
+.card p,.card li{margin:0 0 1.2mm;line-height:1.33}ul{margin:0;padding-left:4.5mm}
+.steps{display:flex;gap:2.5mm}.step{flex:1;background:#f7f9fc;border-top:2mm solid #1B7F79;border-radius:2mm;padding:2.2mm;font-size:8.3pt;line-height:1.3}
+.step>b:first-child{display:block;color:#E07A1F;font-size:9pt;margin-bottom:.8mm}
+.kpis{display:flex;gap:2.5mm;margin-bottom:2.5mm}.kpi{flex:1;background:#1d2f4f;color:#fff;border-radius:2mm;padding:2mm;text-align:center}
+.kpi span{display:block;font-size:16pt;font-weight:bold;color:#ffd166}.kpi small{font-size:7.6pt}
+img{max-width:100%;display:block;margin:0 auto}
+table{border-collapse:collapse;width:100%;font-size:8.2pt}th,td{padding:1.1mm 1.3mm;border-bottom:1px solid #dde3ec;text-align:center}
+th{background:#eef2f8;color:#1d2f4f}td:first-child,th:first-child{text-align:left}tr.sel td{font-weight:bold;background:#fff4d6}
+.ref{font-size:6.9pt;line-height:1.22;padding-left:5mm;text-indent:-5mm;margin:0 0 1mm}
+.note{font-size:7.8pt;color:#555}
+</style></head><body>
+<header><div class=tit><h1>Del ML clásico al Deep Learning: predicción del abandono de clientes a partir de su secuencia semanal de compras con GRU, LSTM y Transformer</h1>
+<p>ACA N° 2 · Aprendizaje Automático · Especialización en Inteligencia Artificial · CUN – Escuela de Ingeniería · Docente: Hamilton Rivera Flor<br>
+<b>Integrantes:</b> Juan Guillermo Angel Jaramillo · Luis Bernardo Correa Restrepo · María Alejandra Manga Betancourt</p></div>
+<div class=lk><b>App:</b> <i>(enlace de Streamlit Cloud – por publicar)</i><br><b>Video:</b> <i>(enlace del video – por publicar)</i><br><b>Código:</b> <i>(enlace del repositorio GitHub – por publicar)</i></div></header>
+<div class=wrap>
+<div class=row>
+<div class=card><h2>Objetivo general</h2><p>Entrenar redes neuronales secuenciales (GRU, LSTM y Transformer temporal) que lean la <b>historia semanal de compras</b> de cada cliente para anticipar su abandono, compararlas con el Random Forest del ACA 1 en los mismos clientes y desplegar la mejor en una app Streamlit explicable.</p></div>
+<div class=card><h2>Situación problema</h2><p><i>¿Cómo aprovechar redes neuronales (CNN, RNN, Transformers) para extraer patrones complejos en datos de ventas y llevarlos a una interfaz interactiva?</i></p><p>En el ACA 1 el modelo veía una <b>foto</b> del cliente (recencia, frecuencia, gasto). Ahora la red ve la <b>película</b>: 40 semanas de compras, con su orden y su ritmo.</p></div>
+<div class=card><h2>Dataset: UCI Online Retail (Chen, 2015)</h2><ul>
+<li>541.909 líneas de factura (dic-2010 → dic-2011) de un minorista en línea del Reino Unido; 391.148 ventas limpias.</li>
+<li>3.314 clientes con compras antes del corte del 1-sep-2011; <b>abandono</b> = no vuelve a comprar después (41,2 %).</li>
+<li>Partición idéntica al ACA 1: train 2253 · val 398 · prueba 663.</li></ul></div>
+</div>
+<div class="card mb"><h2>Ruta metodológica</h2><div class=steps>
+<div class=step><b>1 · Exploración y SQL</b>Transacciones en <b>SQLite</b>; calidad, EDA y limpieza con consultas y <b>vistas SQL</b> (nulos, duplicados, cancelaciones, precios ≤ 0).</div>
+<div class=step><b>2 · Pipeline</b><b>Secuencias</b> de 40 semanas × 7 canales; escalado sólo con train; partición por cliente sin fuga; <b>aumento</b> (escalado, jitter, recorte de ventana); pos_weight.</div>
+<div class=step><b>3 · Modelado</b>RF del ACA 1 (base) · <b>GRU</b> · <b>LSTM</b> · <b>Transformer</b> temporal; 5 semillas; AdamW y early stopping por AUC de validación.</div>
+<div class=step><b>4 · Evaluación</b>Curvas por época, ROC/PR, matriz de confusión, IC 95 % bootstrap, ΔAUC pareado, permutación, oclusión y atención.</div>
+<div class=step><b>5 · Despliegue</b>App Streamlit: cliente, secuencia manual, lotes CSV, historial y consultas SQL, desempeño y selector de modelos.</div></div></div>
+<div class="card mb"><h2>Arquitectura elegida para la app (mayor ROC-AUC en validación): GRU (red recurrente con compuertas) + R-F-M</h2><img src="../figuras/11_arquitectura_gru.png" style="max-height:46mm"><p class=note style="margin:0">Lee las 40 semanas en orden; sus compuertas de actualización y reinicio deciden qué recordar del pasado. El último estado oculto (32) se concatena con R-F-M y pasa a una capa densa con salida sigmoide. 11.457 parámetros por red · ensamble de 5 semillas · AdamW. early stopping por AUC de validación.</p></div>
+<div class=row>
+<div class=card style="flex:1.25"><h2>Resultados en prueba (n = 663, los mismos clientes del ACA 1)</h2>
+<div class=kpis><div class=kpi><span>0,731</span><small>ROC-AUC GRU</small></div><div class=kpi><span>0,720</span><small>ROC-AUC RF ACA 1</small></div>
+<div class=kpi><span>67,4 %</span><small>Recall abandono</small></div><div class=kpi><span>0,622</span><small>F1</small></div></div>
+<table><tr><th>Modelo</th><th>Parám.</th><th>AUC val</th><th>ROC-AUC</th><th>F1</th><th>Recall</th><th>Precisión</th><th>ΔAUC vs RF [IC 95 %]</th></tr><tr><td>Random Forest (ACA 1)</td><td>—</td><td>—</td><td>0,720</td><td>0,654</td><td>0,821</td><td>0,544</td><td>—</td></tr><tr class=sel><td>GRU</td><td>11,5 k</td><td>0,774</td><td>0,731</td><td>0,622</td><td>0,674</td><td>0,577</td><td>+0,011 [−0,000; +0,022]</td></tr><tr><td>LSTM</td><td>14,9 k</td><td>0,771</td><td>0,730</td><td>0,640</td><td>0,740</td><td>0,564</td><td>+0,010 [−0,002; +0,021]</td></tr><tr><td>Transformer</td><td>19,9 k</td><td>0,769</td><td>0,731</td><td>0,648</td><td>0,758</td><td>0,566</td><td>+0,011 [−0,001; +0,024]</td></tr></table>
+<p class=note style="margin-top:1.5mm">IC 95 % (bootstrap, 2.000 remuestreos pareados) de GRU: ROC-AUC 0,693–0,766 · F1 0,575–0,666 · recall 0,618–0,728. ΔAUC frente al RF: +0,011 (p = 0,052). Umbrales elegidos en validación (regla de Youden del ACA 1). <b>Al mismo punto de operación</b> (recall ≥ 0,80 fijado en validación): GRU 218 abandonos detectados con 170 falsas alarmas; RF 224 con 188.</p></div>
+<div class=card><h2>Vista previa de la app Streamlit</h2><img src="../figuras/12_app_preview.png" style="max-height:60mm"></div>
+</div>
+<div class="card mb"><h2>GRU: curvas de entrenamiento/validación (5 semillas) y matriz de confusión</h2>
+<img src="../figuras/13_poster_modelo_app.png" style="max-height:50mm"></div>
+<div class=row>
+<div class=card style="flex:1.35"><h2>Interpretabilidad</h2><img src="../figuras/10_interpretabilidad.png" style="max-height:46mm">
+<p class=note>Lo más influyente para GRU es <b>Productos distintos</b> (caída de AUC 0,031), luego Unidades y Frecuencia (pedidos) [estática]. Borrar una compra de las 8 últimas semanas cambia P(abandono) en +0,113 frente a +0,041 en el primer trimestre. El [CLS] del Transformer dedica 20,3 % de su atención a esas 8 semanas (20 % si fuera uniforme).</p></div>
+<div class=card style="flex:1"><h2>Conclusiones</h2><ul><li>Con la misma etiqueta y los mismos 663 clientes de prueba del ACA 1, la red elegida por validación (GRU, ensamble de 5 semillas) obtiene ROC-AUC 0,731 frente a 0,720 del Random Forest R-F-M (ΔAUC pareado +0,011; IC 95 % −0,000 a +0,022).</li><li>Las tres redes superan al RF por un margen similar, pero el intervalo de la diferencia toca el cero: la mejora es consistente aunque pequeña y no concluyente con 663 clientes. Con secuencias tan dispersas, buena parte de la señal ya está en R-F-M.</li><li>Al mismo punto de operación (recall ≥ 0,80, umbral fijado en validación), GRU detecta 218 abandonos con 170 falsas alarmas frente a 224 y 188 del RF (precisión 0,562 vs 0,544).</li><li>La secuencia aporta sobre todo en el segmento «Recientes» (AUC 0,583 vs 0,514) y en clientes con varios pedidos; en «Dormidos» ningún modelo supera AUC 0,552.</li><li>Interpretabilidad: lo más influyente es productos distintos y borrar una compra de las últimas 8 semanas sube el riesgo +0,113 frente a +0,041 en el primer trimestre: la red pondera lo reciente. La atención del Transformer resultó casi uniforme, por lo que la oclusión es la explicación usada en la app.</li><li>El límite está en los clientes de un solo pedido (42 % de la base): su error es 41 % frente a 13 % en clientes con 4+ pedidos.</li></ul></div>
+</div>
+<div class="card mb" style="columns:2;column-gap:6mm"><h2 style="column-span:all">Referencias (APA 7)</h2>
+<p class=ref>Chen, D. (2015). <i>Online Retail</i> [Conjunto de datos]. UCI Machine Learning Repository. https://doi.org/10.24432/C5BW33</p>
+<p class=ref>Cho, K., van Merriënboer, B., Gulcehre, C., Bahdanau, D., Bougares, F., Schwenk, H., &amp; Bengio, Y. (2014). Learning phrase representations using RNN encoder–decoder for statistical machine translation. En <i>Proceedings of EMNLP 2014</i> (pp. 1724–1734). https://doi.org/10.3115/v1/D14-1179</p>
+<p class=ref>Hochreiter, S., &amp; Schmidhuber, J. (1997). Long short-term memory. <i>Neural Computation, 9</i>(8), 1735–1780. https://doi.org/10.1162/neco.1997.9.8.1735</p>
+<p class=ref>Iwana, B. K., &amp; Uchida, S. (2021). An empirical survey of data augmentation for time series classification with neural networks. <i>PLOS ONE, 16</i>(7), e0254841. https://doi.org/10.1371/journal.pone.0254841</p>
+<p class=ref>Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., &amp; Polosukhin, I. (2017). Attention is all you need. En <i>Advances in Neural Information Processing Systems 30</i> (pp. 5998–6008).</p>
+</div>
+</div></body></html>

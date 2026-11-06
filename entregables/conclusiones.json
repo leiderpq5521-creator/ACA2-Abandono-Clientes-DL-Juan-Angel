@@ -1,0 +1,9 @@
+[
+ "Con la misma etiqueta y los mismos 663 clientes de prueba del ACA 1, la red elegida por validación (GRU, ensamble de 5 semillas) obtiene ROC-AUC 0,731 frente a 0,720 del Random Forest R-F-M (ΔAUC pareado +0,011; IC 95 % −0,000 a +0,022).",
+ "Las tres redes superan al RF por un margen similar, pero el intervalo de la diferencia toca el cero: la mejora es consistente aunque pequeña y no concluyente con 663 clientes. Con secuencias tan dispersas, buena parte de la señal ya está en R-F-M.",
+ "Al mismo punto de operación (recall ≥ 0,80, umbral fijado en validación), GRU detecta 218 abandonos con 170 falsas alarmas frente a 224 y 188 del RF (precisión 0,562 vs 0,544).",
+ "La secuencia aporta sobre todo en el segmento «Recientes» (AUC 0,583 vs 0,514) y en clientes con varios pedidos; en «Dormidos» ningún modelo supera AUC 0,552.",
+ "Interpretabilidad: lo más influyente es productos distintos y borrar una compra de las últimas 8 semanas sube el riesgo +0,113 frente a +0,041 en el primer trimestre: la red pondera lo reciente. La atención del Transformer resultó casi uniforme, por lo que la oclusión es la explicación usada en la app.",
+ "El límite está en los clientes de un solo pedido (42 % de la base): su error es 41 % frente a 13 % en clientes con 4+ pedidos.",
+ "Respuesta a la pregunta orientadora: las redes recurrentes y de atención extraen el patrón secuencial de compra, igualan o superan ligeramente al ML clásico en el mismo problema y se ponen al servicio del equipo comercial en una app Streamlit que explica cada predicción semana a semana."
+]
