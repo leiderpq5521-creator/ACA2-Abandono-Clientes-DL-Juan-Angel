@@ -6,6 +6,7 @@ Los enlaces pasados se guardan en entregables/enlace_*.txt y se reutilizan en la
 import argparse
 import json
 import math
+import re
 import shutil
 import subprocess
 import tempfile
@@ -138,7 +139,8 @@ img{{max-width:100%;display:block;margin:0 auto}}
 table{{border-collapse:collapse;width:100%;font-size:8.2pt}}th,td{{padding:1.1mm 1.3mm;border-bottom:1px solid #dde3ec;text-align:center}}
 th{{background:#eef2f8;color:#1d2f4f}}td:first-child,th:first-child{{text-align:left}}tr.sel td{{font-weight:bold;background:#fff4d6}}
 .ref{{font-size:6.9pt;line-height:1.22;padding-left:5mm;text-indent:-5mm;margin:0 0 1mm}}
-.note{{font-size:7.8pt;color:#555}}
+.note{{font-size:7.8pt;color:#555}}.ref a{{color:#1d4f91;overflow-wrap:break-word}}
+.links{{background:#1d2f4f;color:#fff}}.links h2{{color:#fff;border-color:#E07A1F}}.links p{{font-size:9pt;line-height:1.5;margin:0}}.links a{{color:#ffd166;text-decoration:underline;word-break:break-all}}
 </style></head><body>
 <header><div class=tit><h1>Del ML clásico al Deep Learning: predicción del abandono de clientes a partir de su secuencia semanal de compras con GRU, LSTM y Transformer</h1>
 <p>ACA N° 2 · Aprendizaje Automático · Especialización en Inteligencia Artificial · CUN – Escuela de Ingeniería · Docente: Hamilton Rivera Flor<br>
@@ -180,9 +182,12 @@ th{{background:#eef2f8;color:#1d2f4f}}td:first-child,th:first-child{{text-align:
 <p class=ref>Cho, K., van Merriënboer, B., Gulcehre, C., Bahdanau, D., Bougares, F., Schwenk, H., &amp; Bengio, Y. (2014). Learning phrase representations using RNN encoder–decoder for statistical machine translation. En <i>Proceedings of EMNLP 2014</i> (pp. 1724–1734). https://doi.org/10.3115/v1/D14-1179</p>
 <p class=ref>Hochreiter, S., &amp; Schmidhuber, J. (1997). Long short-term memory. <i>Neural Computation, 9</i>(8), 1735–1780. https://doi.org/10.1162/neco.1997.9.8.1735</p>
 <p class=ref>Iwana, B. K., &amp; Uchida, S. (2021). An empirical survey of data augmentation for time series classification with neural networks. <i>PLOS ONE, 16</i>(7), e0254841. https://doi.org/10.1371/journal.pone.0254841</p>
-<p class=ref>Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., &amp; Polosukhin, I. (2017). Attention is all you need. En <i>Advances in Neural Information Processing Systems 30</i> (pp. 5998–6008).</p>
+<p class=ref>Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., &amp; Polosukhin, I. (2017). Attention is all you need. En <i>Advances in Neural Information Processing Systems 30</i> (pp. 5998–6008). https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html</p>
 </div>
+<div class="card links"><h2>Enlaces del proyecto</h2><p><b>App Streamlit:</b> {enlace(args.app)}<br><b>Video de sustentación:</b> {enlace(args.video)}<br><b>Código (GitHub):</b> {enlace(args.repo)}</p></div>
 </div></body></html>"""
+# Todas las URL de las referencias como hipervínculos clicables en el PDF
+html = re.sub(r'(?<=[ >])(https://(?:doi\.org|proceedings\.neurips\.cc)/[^\s<]+)', r'<a href="\1">\1</a>', html)
 
 ruta_html = OUT / "poster.html"
 navegador = next((p for p in (shutil.which("msedge"), shutil.which("chrome"),
