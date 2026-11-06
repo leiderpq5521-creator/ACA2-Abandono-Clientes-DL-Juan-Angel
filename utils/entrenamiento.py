@@ -50,15 +50,19 @@ def entrenar(modelo, dl_train, dl_val, epocas: int = 80, lr: float = 2e-3, weigh
             opt.step()
             perd += loss.item() * len(y); n += len(y)
             ys.append(y); ps.append(torch.sigmoid(logit.detach()))
-        auc_tr = roc_auc_score(torch.cat(ys).numpy(), torch.cat(ps).numpy())
+        y_tr, p_tr = torch.cat(ys).numpy(), torch.cat(ps).numpy()
+        auc_tr = roc_auc_score(y_tr, p_tr)
         yv, pv = predecir(modelo, dl_val)
         loss_v = crit_val(torch.logit(torch.tensor(pv).clamp(1e-6, 1 - 1e-6)), torch.tensor(yv, dtype=torch.float32)).item()
         auc_v = roc_auc_score(yv, pv)
         sched.step(auc_v)
-        hist.append(dict(epoca=ep, loss_train=perd / n, loss_val=loss_v, auc_train=auc_tr, auc_val=auc_v,
-                         acc_val=accuracy_score(yv, pv >= 0.5), lr=opt.param_groups[0]["lr"], seg=time.time() - t0))
+        # Exactitud y F1 por época con umbral 0,5 (el umbral final se elige después, en validación)
+        acc_tr, acc_v = accuracy_score(y_tr, p_tr >= 0.5), accuracy_score(yv, pv >= 0.5)
+        hist.append(dict(epoca=ep, loss_train=perd / n, loss_val=loss_v, acc_train=acc_tr, acc_val=acc_v,
+                         f1_train=f1_score(y_tr, p_tr >= 0.5), f1_val=f1_score(yv, pv >= 0.5),
+                         auc_train=auc_tr, auc_val=auc_v, lr=opt.param_groups[0]["lr"], seg=time.time() - t0))
         if verbose:
-            print(f"[{nombre}] ép {ep:02d} | loss {perd / n:.3f}/{loss_v:.3f} | AUC {auc_tr:.3f}/{auc_v:.3f} "
+            print(f"[{nombre}] ép {ep:02d} | loss {perd / n:.3f}/{loss_v:.3f} | acc {acc_tr:.3f}/{acc_v:.3f} | AUC {auc_tr:.3f}/{auc_v:.3f} "
                   f"| lr {opt.param_groups[0]['lr']:.1e} | {time.time() - t0:.1f}s")
         if auc_v > mejor + 1e-4:
             mejor, mejor_estado, sin_mejora = auc_v, copy.deepcopy(modelo.state_dict()), 0

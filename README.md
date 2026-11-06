@@ -11,19 +11,19 @@
 **App en línea:** https://aca2-abandono-clientes-dl-juan-angel-tuqs2bahdtmtheu3bhrzfa.streamlit.app/ · **Video:** (por publicar)
 
 ## Resultados (conjunto de prueba: los mismos 663 clientes del ACA 1)
-| Modelo | Parámetros | ROC-AUC val | ROC-AUC | PR-AUC | F1 | Recall | Precisión | ΔAUC vs RF [IC 95 %] |
-|---|---|---|---|---|---|---|---|---|
-| Random Forest (ACA 1) | — | — | 0,720 | 0,590 | 0,654 | 0,821 | 0,544 | — |
-| **GRU** (modelo de la app) | 11.457 | 0,774 | 0,731 | 0,599 | 0,622 | 0,674 | 0,577 | +0,011 [−0,000; +0,022] |
-| LSTM | 14.881 | 0,771 | 0,730 | 0,598 | 0,640 | 0,740 | 0,564 | +0,010 [−0,002; +0,021] |
-| Transformer | 19.937 | 0,769 | 0,731 | 0,600 | 0,648 | 0,758 | 0,566 | +0,011 [−0,001; +0,024] |
+| Modelo | Parámetros | ROC-AUC val | Accuracy | ROC-AUC | PR-AUC | F1 | Recall | Precisión | ΔAUC vs RF [IC 95 %] |
+|---|---|---|---|---|---|---|---|---|---|
+| Random Forest (ACA 1) | — | — | 0,642 | 0,720 | 0,590 | 0,654 | 0,821 | 0,544 | — |
+| **GRU** (modelo de la app) | 11.457 | 0,774 | 0,662 | 0,731 | 0,599 | 0,622 | 0,674 | 0,577 | +0,011 [−0,000; +0,022] |
+| LSTM | 14.881 | 0,771 | 0,658 | 0,730 | 0,598 | 0,640 | 0,740 | 0,564 | +0,010 [−0,002; +0,021] |
+| Transformer | 19.937 | 0,769 | 0,661 | 0,731 | 0,600 | 0,648 | 0,758 | 0,566 | +0,011 [−0,001; +0,024] |
 
 - El modelo de la app se eligió por el mayor **ROC-AUC en validación**; la prueba sólo se usa para reportar. Cada red es un ensamble de 5 semillas.
 - Las tres redes superan al RF por un margen similar, pero el intervalo de la diferencia toca el cero: la mejora es consistente aunque pequeña y no concluyente con 663 clientes. Con secuencias tan dispersas, buena parte de la señal ya está en R-F-M.
 - **Mismo punto de operación** (recall ≥ 0,80, umbral fijado en validación): GRU detecta 218 abandonos con 170 falsas alarmas (precisión 0,562); el RF, 224 con 188 (precisión 0,544).
 - Interpretabilidad (GRU): lo más influyente es **Productos distintos**; borrar una compra de las últimas 8 semanas sube P(abandono) en +0,113 frente a +0,041 en el primer trimestre.
 - La app acierta 6 de sus 8 ejemplos (clientes de prueba elegidos al azar por segmento y clase, sin mirar la predicción).
-- Pérdida inicial verificada antes de entrenar: 0,814 (esperada 0,814). El notebook completo tarda ≈ 11 min en CPU.
+- Pérdida inicial verificada antes de entrenar: 0,814 (esperada 0,814). El notebook completo tarda ≈ 19 min en CPU.
 
 ## Contenido
 | Ruta | Qué es |
@@ -46,7 +46,7 @@ python -m venv .venv
 ```
 La app no necesita internet ni el dataset crudo: usa `modelos/` y `data/ventas.db`.
 
-## Reentrenar (opcional, ≈ 11 min en CPU)
+## Reentrenar (opcional, ≈ 19 min en CPU)
 ```bash
 .venv/Scripts/python -m pip install -r requirements-notebook.txt
 .venv/Scripts/jupyter nbconvert --to notebook --execute --inplace ACA2_Deep_Learning_Ventas.ipynb --ExecutePreprocessor.timeout=10800

@@ -1,0 +1,9 @@
+# Dependencias de la app Streamlit (inferencia en CPU, sin internet ni dataset crudo)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.6
+streamlit>=1.57
+scikit-learn==1.9.1
+joblib>=1.4
+numpy>=1.26
+pandas>=2.2
+altair>=5

@@ -1,0 +1,11 @@
+ACA N° 2 – Aprendizaje Automático (CUN) · Pilar Ventas
+Abandono de clientes con secuencias semanales: GRU, LSTM y Transformer vs. Random Forest del ACA 1
+Integrantes: Juan Guillermo Angel Jaramillo · Luis Bernardo Correa Restrepo · María Alejandra Manga Betancourt
+Docente: Hamilton Rivera Flor
+
+Contenido:
+1. ACA2_Deep_Learning_Ventas.ipynb – notebook ejecutado (SQL, EDA, pipeline, redes, evaluación)
+2. Poster_ACA2_Ventas_DL.pdf – póster A3 con enlaces clicables (poster.html es su fuente)
+3. app.py + requirements.txt – app Streamlit (requiere utils/, modelos/ y data/ del repositorio)
+4. Guion_Video_3-5min.md – guion del video (video: ver enlace en el póster)
+README.md – resultados, instrucciones de ejecución y despliegue

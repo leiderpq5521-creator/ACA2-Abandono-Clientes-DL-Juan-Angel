@@ -60,7 +60,7 @@ def fila(k, v):
     par = f"{v['parametros'] / 1e3:.1f} k".replace(".", ",") if v.get("parametros") else "—"
     return (f"<tr{' class=sel' if k == APP else ''}><td>{k}</td><td>{par}</td>"
             f"<td>{num(m['seleccion_val'][k]['auc_val']) if k in m['seleccion_val'] else '—'}</td>"
-            f"<td>{num(v['roc_auc'])}</td><td>{num(v['f1'])}</td><td>{num(v['recall'])}</td><td>{num(v['precision'])}</td><td>{dif}</td></tr>")
+            f"<td>{num(v['accuracy'])}</td><td>{num(v['roc_auc'])}</td><td>{num(v['f1'])}</td><td>{num(v['recall'])}</td><td>{num(v['precision'])}</td><td>{dif}</td></tr>")
 
 
 filas = "".join(fila(k, v) for k, v in R.items())
@@ -74,25 +74,26 @@ def figura_poster():
     import numpy as np
     hs = m["historial"][APP]
     plt.rcParams.update({"font.size": 12, "axes.spines.top": False, "axes.spines.right": False})
-    fig, ax = plt.subplots(1, 3, figsize=(15, 3.9), gridspec_kw={"width_ratios": [1, 1, .75]})
+    fig, ax = plt.subplots(1, 4, figsize=(19, 3.9), gridspec_kw={"width_ratios": [1, 1, 1, .75]})
+    paneles = [("loss", "Pérdida BCE por época"), ("acc", "Accuracy por época (umbral 0,5)"), ("auc", "ROC-AUC por época")]
     for i, h in enumerate(hs):
         ep = [x["epoca"] for x in h]
         lw, al = (2.2, 1) if i == 0 else (1, .35)
-        ax[0].plot(ep, [x["loss_train"] for x in h], color="#2E86AB", lw=lw, alpha=al, label="entrenamiento" if i == 0 else None)
-        ax[0].plot(ep, [x["loss_val"] for x in h], color="#E07A1F", lw=lw, alpha=al, label="validación" if i == 0 else None)
-        ax[1].plot(ep, [x["auc_train"] for x in h], color="#2E86AB", lw=lw, alpha=al, label="entrenamiento" if i == 0 else None)
-        ax[1].plot(ep, [x["auc_val"] for x in h], color="#E07A1F", lw=lw, alpha=al, label="validación" if i == 0 else None)
-    ax[1].axhline(rf["roc_auc"], color="gray", ls=":", label="RF ACA 1 (prueba)")
-    ax[0].set(title="Pérdida BCE por época", xlabel="Época"); ax[1].set(title="ROC-AUC por época", xlabel="Época")
-    ax[0].legend(fontsize=9); ax[1].legend(fontsize=9)
+        for k, (clave, _) in enumerate(paneles):
+            ax[k].plot(ep, [x[f"{clave}_train"] for x in h], color="#2E86AB", lw=lw, alpha=al, label="entrenamiento" if i == 0 else None)
+            ax[k].plot(ep, [x[f"{clave}_val"] for x in h], color="#E07A1F", lw=lw, alpha=al, label="validación" if i == 0 else None)
+    ax[2].axhline(rf["roc_auc"], color="gray", ls=":", label="RF ACA 1 (prueba)")
+    for k, (_, titulo) in enumerate(paneles):
+        ax[k].set(title=titulo, xlabel="Época")
+        ax[k].legend(fontsize=9)
     c = np.array([[app["VN"], app["FP"]], [app["FN"], app["VP"]]])
-    ax[2].imshow(c, cmap="Oranges")
+    ax[3].imshow(c, cmap="Oranges")
     for (i, j), v in np.ndenumerate(c):
-        ax[2].text(j, i, v, ha="center", va="center", fontsize=16, color="white" if v > c.max() / 2 else "black")
+        ax[3].text(j, i, v, ha="center", va="center", fontsize=16, color="white" if v > c.max() / 2 else "black")
     et = ["Recompra", "Abandono"]
-    ax[2].set_xticks(range(2), et); ax[2].set_yticks(range(2), et)
-    ax[2].set(title=f"Matriz de confusión (prueba, umbral {app['umbral']:.2f})", xlabel="Predicho", ylabel="Real")
-    ax[2].grid(False)
+    ax[3].set_xticks(range(2), et); ax[3].set_yticks(range(2), et)
+    ax[3].set(title=f"Matriz de confusión (prueba, umbral {app['umbral']:.2f})", xlabel="Predicho", ylabel="Real")
+    ax[3].grid(False)
     ruta = BASE / "figuras" / "13_poster_modelo_app.png"
     fig.savefig(ruta, dpi=170, bbox_inches="tight")
     plt.close(fig)
@@ -166,11 +167,11 @@ th{{background:#eef2f8;color:#1d2f4f}}td:first-child,th:first-child{{text-align:
 <div class=card style="flex:1.25"><h2>Resultados en prueba (n = {n['test']}, los mismos clientes del ACA 1)</h2>
 <div class=kpis><div class=kpi><span>{num(app['roc_auc'])}</span><small>ROC-AUC {APP}</small></div><div class=kpi><span>{num(rf['roc_auc'])}</span><small>ROC-AUC RF ACA 1</small></div>
 <div class=kpi><span>{pct(app['recall'])}</span><small>Recall abandono</small></div><div class=kpi><span>{num(app['f1'])}</span><small>F1</small></div></div>
-<table><tr><th>Modelo</th><th>Parám.</th><th>AUC val</th><th>ROC-AUC</th><th>F1</th><th>Recall</th><th>Precisión</th><th>ΔAUC vs RF [IC 95 %]</th></tr>{filas}</table>
+<table><tr><th>Modelo</th><th>Parám.</th><th>AUC val</th><th>Accuracy</th><th>ROC-AUC</th><th>F1</th><th>Recall</th><th>Precisión</th><th>ΔAUC vs RF [IC 95 %]</th></tr>{filas}</table>
 <p class=note style="margin-top:1.5mm">IC 95 % (bootstrap, 2.000 remuestreos pareados) de {APP}: ROC-AUC {num(ic['roc_auc'][0])}–{num(ic['roc_auc'][1])} · F1 {num(ic['f1'][0])}–{num(ic['f1'][1])} · recall {num(ic['recall'][0])}–{num(ic['recall'][1])}. ΔAUC frente al RF: {sgn(d_app['delta_auc'])} (p = {num(d_app['p_valor'])}). Umbrales elegidos en validación (regla de Youden del ACA 1). <b>Al mismo punto de operación</b> (recall ≥ 0,80 fijado en validación): {APP} {m['politica_recall80'][APP]['VP']} abandonos detectados con {m['politica_recall80'][APP]['FP']} falsas alarmas; RF {m['politica_recall80'][RF]['VP']} con {m['politica_recall80'][RF]['FP']}.</p></div>
 <div class=card><h2>Vista previa de la app Streamlit</h2>{f'<img src="../figuras/{preview.name}" style="max-height:60mm">' if preview.exists() else '<p>(captura pendiente)</p>'}</div>
 </div>
-<div class="card mb"><h2>{APP}: curvas de entrenamiento/validación (5 semillas) y matriz de confusión</h2>
+<div class="card mb"><h2>{APP}: curvas de pérdida, accuracy y ROC-AUC por época (5 semillas) y matriz de confusión</h2>
 <img src="{ruta_fig('13_poster_modelo_app.png')}" style="max-height:50mm"></div>
 <div class=row>
 <div class=card style="flex:1.35"><h2>Interpretabilidad</h2><img src="{ruta_fig('10_interpretabilidad.png')}" style="max-height:46mm">

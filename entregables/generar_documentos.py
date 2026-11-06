@@ -37,7 +37,7 @@ for k, v in R.items():
     nombre = f"**{k}** (modelo de la app)" if k == APP else k
     dif = f"{s3(dd['delta_auc'])} [{s3(dd['ic95'][0])}; {s3(dd['ic95'][1])}]" if dd else "—"
     filas.append(f"| {nombre} | {mil(v['parametros']) if v.get('parametros') else '—'} | "
-                 f"{f3(m['seleccion_val'][k]['auc_val']) if k in m['seleccion_val'] else '—'} | {f3(v['roc_auc'])} | "
+                 f"{f3(m['seleccion_val'][k]['auc_val']) if k in m['seleccion_val'] else '—'} | {f3(v['accuracy'])} | {f3(v['roc_auc'])} | "
                  f"{f3(v['pr_auc'])} | {f3(v['f1'])} | {f3(v['recall'])} | {f3(v['precision'])} | {dif} |")
 imp = m["importancia"]
 readme = f"""# ACA N° 2 – Aprendizaje Automático (CUN) · Pilar Ventas
@@ -53,8 +53,8 @@ readme = f"""# ACA N° 2 – Aprendizaje Automático (CUN) · Pilar Ventas
 **App en línea:** {URL_APP} · **Video:** {URL_VIDEO}
 
 ## Resultados (conjunto de prueba: los mismos {n['test']} clientes del ACA 1)
-| Modelo | Parámetros | ROC-AUC val | ROC-AUC | PR-AUC | F1 | Recall | Precisión | ΔAUC vs RF [IC 95 %] |
-|---|---|---|---|---|---|---|---|---|
+| Modelo | Parámetros | ROC-AUC val | Accuracy | ROC-AUC | PR-AUC | F1 | Recall | Precisión | ΔAUC vs RF [IC 95 %] |
+|---|---|---|---|---|---|---|---|---|---|
 {chr(10).join(filas)}
 
 - El modelo de la app se eligió por el mayor **ROC-AUC en validación**; la prueba sólo se usa para reportar. Cada red es un ensamble de {len(m['semillas'])} semillas.

@@ -407,13 +407,13 @@ with tabs[4]:
     for n, r in met["resultados_test"].items():
         d = met["vs_rf"].get(n)
         filas.append({"modelo": n, "parámetros": r["parametros"], "AUC val": met["seleccion_val"].get(n, {}).get("auc_val"),
-                      "umbral": r["umbral"], "ROC-AUC": r["roc_auc"], "PR-AUC": r["pr_auc"], "F1": r["f1"],
+                      "umbral": r["umbral"], "accuracy": r["accuracy"], "ROC-AUC": r["roc_auc"], "PR-AUC": r["pr_auc"], "F1": r["f1"],
                       "recall": r["recall"], "precisión": r["precision"],
                       "ΔAUC vs RF [IC 95 %]": f"{d['delta_auc']:+.3f} [{d['ic95'][0]:+.3f}, {d['ic95'][1]:+.3f}]" if d else "—"})
     st.dataframe(pd.DataFrame(filas), hide_index=True,
                  column_config={k: st.column_config.NumberColumn(format="%.3f")
-                                for k in ("AUC val", "ROC-AUC", "PR-AUC", "F1", "recall", "precisión")})
-    for archivo, titulo in [("05_curvas_entrenamiento.png", "Curvas de entrenamiento y validación por época"),
+                                for k in ("AUC val", "accuracy", "ROC-AUC", "PR-AUC", "F1", "recall", "precisión")})
+    for archivo, titulo in [("05_curvas_entrenamiento.png", "Curvas de pérdida, accuracy y ROC-AUC por época (entrenamiento y validación)"),
                             ("06_roc_pr.png", "Curvas ROC y Precisión–Recall"), ("07_matrices_confusion.png", "Matrices de confusión"),
                             ("09_desglose.png", "¿Dónde aporta la secuencia? ROC-AUC por segmento y por número de pedidos"),
                             ("10_interpretabilidad.png", "Interpretabilidad: permutación, oclusión por semana y atención"),
