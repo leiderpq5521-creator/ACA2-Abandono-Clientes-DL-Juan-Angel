@@ -7,7 +7,7 @@
 
 **Duración estimada:** ≈ 4.3 min (585 palabras a ≈ 135 palabras/min).
 **Enlaces para la demo:**
-- App: (por publicar)
+- App: https://aca2-abandono-clientes-dl-juan-angel-tuqs2bahdtmtheu3bhrzfa.streamlit.app/
 - Código: https://github.com/leiderpq5521-creator/ACA2-Abandono-Clientes-DL-Juan-Angel
 - Póster: `entregables/Poster_ACA2_Ventas_DL.pdf`
 
