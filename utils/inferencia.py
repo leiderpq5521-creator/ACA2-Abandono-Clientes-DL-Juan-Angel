@@ -15,7 +15,7 @@ def preparar(base: np.ndarray, esc: Escalador) -> tuple[torch.Tensor, torch.Tens
     return torch.from_numpy(seq), torch.from_numpy(est)
 
 
-@torch.no_grad()
+@torch.inference_mode()
 def probabilidad(modelo, esc: Escalador, base: np.ndarray, lote: int = 512) -> np.ndarray:
     base = np.asarray(base, dtype=np.float32)
     if base.ndim == 2:
@@ -25,8 +25,8 @@ def probabilidad(modelo, esc: Escalador, base: np.ndarray, lote: int = 512) -> n
     return np.concatenate(out)
 
 
-@torch.no_grad()
-def oclusion_semanas(modelo, esc: Escalador, base: np.ndarray) -> pd.DataFrame:
+@torch.inference_mode()
+def oclusion_semanas(modelo, esc: Escalador, base: np.ndarray) -> tuple[pd.DataFrame, float]:
     """Para cada semana con actividad: cambio en P(abandono) si esa semana se borra (oclusión).
     Positivo = esa semana REDUCÍA el riesgo (borrarla lo sube)."""
     base = np.asarray(base, dtype=np.float32)
@@ -50,7 +50,12 @@ def secuencia_desde_tabla(df: pd.DataFrame) -> np.ndarray:
     faltan = [c for c in BASE_CANALES if c not in df.columns]
     if faltan:
         raise ValueError(f"Faltan columnas: {', '.join(faltan)}")
-    x = df[BASE_CANALES].apply(pd.to_numeric, errors="coerce").fillna(0).clip(lower=0).to_numpy(np.float32)[-N_SEMANAS:]
+    # Extracción numérica optimizada evitando conversiones redundantes
+    mat = df[BASE_CANALES].to_numpy(dtype=np.float32, copy=True)
+    np.nan_to_num(mat, copy=False, nan=0.0)
+    np.clip(mat, a_min=0.0, a_max=None, out=mat)
+    x = mat[-N_SEMANAS:]
     base = np.zeros((N_SEMANAS, len(BASE_CANALES)), dtype=np.float32)
     base[N_SEMANAS - len(x):] = x
     return base
+

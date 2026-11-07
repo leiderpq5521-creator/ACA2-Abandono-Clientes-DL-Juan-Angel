@@ -9,3 +9,8 @@ figuras/_rapido/
 
 # copias comprimidas locales
 *.zip
+
+# SQLite temporales
+*.db-wal
+*.db-shm
+

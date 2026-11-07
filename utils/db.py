@@ -39,11 +39,16 @@ CREATE TABLE IF NOT EXISTS predicciones (
 );
 CREATE INDEX IF NOT EXISTS ix_cli_part ON clientes(particion);
 CREATE INDEX IF NOT EXISTS ix_series_cli ON series(CustomerID);
+CREATE INDEX IF NOT EXISTS ix_pred_cli ON predicciones(CustomerID);
+CREATE INDEX IF NOT EXISTS ix_pred_fecha ON predicciones(fecha DESC);
+
 """
 
 
 def conectar(ruta: Path | str = RUTA_DB) -> sqlite3.Connection:
     con = sqlite3.connect(ruta, check_same_thread=False)
+    con.execute("PRAGMA journal_mode=WAL;")
+    con.execute("PRAGMA synchronous=NORMAL;")
     con.executescript(ESQUEMA)
     return con
 
@@ -81,3 +86,14 @@ def registrar_prediccion(con: sqlite3.Connection, origen: str, customer_id, mode
                 (datetime.now().isoformat(timespec="seconds"), origen,
                  None if customer_id is None else int(customer_id), modelo, float(prob), float(umbral), decision))
     con.commit()
+
+
+def registrar_predicciones_lote(con: sqlite3.Connection, filas: list[tuple]) -> None:
+    """Inserta múltiples predicciones en una sola transacción."""
+    if not filas:
+        return
+    con.executemany("INSERT INTO predicciones (fecha, origen, CustomerID, modelo, prob_abandono, umbral, decision) "
+                    "VALUES (?,?,?,?,?,?,?)", filas)
+    con.commit()
+
+

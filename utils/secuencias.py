@@ -79,8 +79,11 @@ class Escalador:
         self.idx_log = [CANALES.index(c) for c in LOG_CANALES]
 
     def _log(self, seq, est):
-        seq = seq.copy(); seq[..., self.idx_log] = np.log1p(np.maximum(seq[..., self.idx_log], 0))
-        return seq, np.log1p(np.maximum(est, 0))
+        seq = seq.copy()
+        np.maximum(seq[..., self.idx_log], 0, out=seq[..., self.idx_log])
+        np.log1p(seq[..., self.idx_log], out=seq[..., self.idx_log])
+        est_log = np.log1p(np.maximum(est, 0))
+        return seq, est_log
 
     def ajustar(self, base_train: np.ndarray) -> "Escalador":
         seq, est = self._log(*derivar(base_train))
