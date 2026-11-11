@@ -6,7 +6,8 @@ Docente: Hamilton Rivera Flor
 Entregables oficiales (Sección 4 del enunciado)
 1_Notebook/       1. Notebook de Jupyter ejecutado: preprocesamiento, redes, entrenamiento, curvas y evaluación.
                      Para re-ejecutarlo, clonar el repositorio (necesita utils/, aca1/ y data/).
-2_Poster/         2. Póster tipo infografía (PDF A3, 1 página, con enlaces a la app, el video y el repositorio).
+2_Poster/         2. Póster tipo infografía (PDF A3, 1 página, con enlaces a la app, el video y el repositorio)
+                     y Poster_ACA2_Ventas_DL.html, la misma versión en HTML con las figuras incrustadas.
 3_App_Streamlit/  3. App interactiva: app.py, scripts auxiliares, modelos, requirements.txt e instrucciones
                      (COMO_EJECUTAR.txt y README.md).
                   4. Video de sustentación: se entrega por separado.

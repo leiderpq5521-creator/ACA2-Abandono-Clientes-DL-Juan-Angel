@@ -11,6 +11,8 @@ También deja ENTREGABLES_ACA2_VENTAS.zip al lado de la carpeta, listo para subi
 Uso:  python entregables/armar_entregables.py
 Ejecutar después de generar_poster.py y generar_documentos.py para que las copias lleven las cifras finales.
 """
+import base64
+import re
 import shutil
 import sqlite3
 from pathlib import Path
@@ -47,6 +49,13 @@ copiar(BASE / "requirements-notebook.txt", N1 / "requirements-notebook.txt")
 
 # 2. Póster tipo infografía
 copiar(ENT / "Poster_ACA2_Ventas_DL.pdf", DEST / "2_Poster" / "Poster_ACA2_Ventas_DL.pdf")
+# Versión HTML autocontenida: las figuras van incrustadas en base64, así se ve bien desde cualquier carpeta
+# (el poster.html original usa rutas ../figuras/ que sólo existen dentro del repositorio).
+html = re.sub(r'src="\.\./figuras/([^"]+)"',
+              lambda m: 'src="data:image/png;base64,' + base64.b64encode((BASE / "figuras" / m.group(1)).read_bytes()).decode() + '"',
+              (ENT / "poster.html").read_text(encoding="utf-8"))
+assert "../figuras/" not in html
+(DEST / "2_Poster" / "Poster_ACA2_Ventas_DL.html").write_text(html, encoding="utf-8")
 
 # 3. App interactiva Streamlit (carpeta autocontenida: se ejecuta tal cual)
 N3 = DEST / "3_App_Streamlit"
@@ -93,7 +102,8 @@ if VIDEO.exists():
     "Entregables oficiales (Sección 4 del enunciado)\n"
     "1_Notebook/       1. Notebook de Jupyter ejecutado: preprocesamiento, redes, entrenamiento, curvas y evaluación.\n"
     "                     Para re-ejecutarlo, clonar el repositorio (necesita utils/, aca1/ y data/).\n"
-    "2_Poster/         2. Póster tipo infografía (PDF A3, 1 página, con enlaces a la app, el video y el repositorio).\n"
+    "2_Poster/         2. Póster tipo infografía (PDF A3, 1 página, con enlaces a la app, el video y el repositorio)\n"
+    "                     y Poster_ACA2_Ventas_DL.html, la misma versión en HTML con las figuras incrustadas.\n"
     "3_App_Streamlit/  3. App interactiva: app.py, scripts auxiliares, modelos, requirements.txt e instrucciones\n"
     "                     (COMO_EJECUTAR.txt y README.md).\n"
     + ("4_Video/          4. Video de sustentación (3 a 5 min).\n" if VIDEO.exists()
