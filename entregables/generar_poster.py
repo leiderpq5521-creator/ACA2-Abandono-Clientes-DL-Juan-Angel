@@ -216,8 +216,9 @@ if navegador:
         escribir(zoom)
         perfil = tempfile.mkdtemp(prefix="poster_")   # perfil propio: no interfiere con un navegador abierto
         pdf.unlink(missing_ok=True)                    # evita dar por buena una versión anterior
-        r = subprocess.run([navegador, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", f"--user-data-dir={perfil}",
-                            "--allow-file-access-from-files", "--virtual-time-budget=10000", f"--print-to-pdf={pdf}",
+        r = subprocess.run([navegador, "--headless=old", "--disable-gpu", "--no-pdf-header-footer", f"--user-data-dir={perfil}",
+                            "--no-first-run", "--no-default-browser-check", "--disable-features=OptimizationGuideModelDownloading,OptimizationHints",
+                            "--allow-file-access-from-files", f"--print-to-pdf={pdf}",
                             ruta_html.resolve().as_uri()], capture_output=True, text=True, timeout=180)
         for _ in range(20):                           # el navegador puede terminar de escribir tras salir
             if pdf.exists() and pdf.stat().st_size > 0:

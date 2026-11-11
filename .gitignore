@@ -14,3 +14,6 @@ figuras/_rapido/
 *.db-wal
 *.db-shm
 
+
+# copias locales de respaldo
+_respaldo/

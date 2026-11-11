@@ -1,0 +1,175 @@
+{
+  "modelo": "Random Forest",
+  "hiperparametros": {
+    "max_depth": 4,
+    "min_samples_leaf": 3,
+    "n_estimators": 300
+  },
+  "n_variables": 3,
+  "umbral": 0.38,
+  "fecha_corte": "2011-09-01",
+  "k_segmentos": 4,
+  "n_clientes": 3314,
+  "n_train": 2651,
+  "n_test": 663,
+  "tasa_abandono": 0.4125,
+  "metricas_test": {
+    "accuracy": 0.6425,
+    "precision": 0.5437,
+    "recall": 0.8205,
+    "especificidad": 0.5179,
+    "f1": 0.654,
+    "roc_auc": 0.7197,
+    "pr_auc": 0.59,
+    "brier": 0.2067,
+    "VP": 224,
+    "FP": 188,
+    "FN": 49,
+    "VN": 202
+  },
+  "ic95": {
+    "accuracy": [
+      0.6048,
+      0.6772
+    ],
+    "precision": [
+      0.4942,
+      0.5921
+    ],
+    "recall": [
+      0.773,
+      0.8653
+    ],
+    "f1": [
+      0.61,
+      0.6941
+    ],
+    "roc_auc": [
+      0.6789,
+      0.7554
+    ]
+  },
+  "cv_5x3": {
+    "accuracy": 0.685,
+    "precision": 0.6142,
+    "recall": 0.6371,
+    "f1": 0.625,
+    "roc_auc": 0.7515
+  },
+  "comparacion_cv": {
+    "Gradient Boosting": {
+      "accuracy": 0.6828,
+      "precision": 0.6167,
+      "recall": 0.6109,
+      "f1": 0.6134,
+      "roc_auc": 0.7485
+    },
+    "Regresión logística": {
+      "accuracy": 0.6821,
+      "precision": 0.6134,
+      "recall": 0.6203,
+      "f1": 0.6165,
+      "roc_auc": 0.746
+    },
+    "Naive Bayes": {
+      "accuracy": 0.6669,
+      "precision": 0.5743,
+      "recall": 0.7444,
+      "f1": 0.6482,
+      "roc_auc": 0.7449
+    },
+    "KNN": {
+      "accuracy": 0.6737,
+      "precision": 0.6082,
+      "recall": 0.5914,
+      "f1": 0.5993,
+      "roc_auc": 0.7386
+    },
+    "Random Forest": {
+      "accuracy": 0.6728,
+      "precision": 0.6078,
+      "recall": 0.5871,
+      "f1": 0.5969,
+      "roc_auc": 0.7378
+    },
+    "Árbol de decisión": {
+      "accuracy": 0.6745,
+      "precision": 0.6063,
+      "recall": 0.6094,
+      "f1": 0.6051,
+      "roc_auc": 0.7338
+    },
+    "SVM (RBF)": {
+      "accuracy": 0.684,
+      "precision": 0.6113,
+      "recall": 0.6447,
+      "f1": 0.6271,
+      "roc_auc": 0.7325
+    }
+  },
+  "ganancia": {
+    "10": {
+      "abandonos_alcanzados_pct": 14.7,
+      "lift": 1.47
+    },
+    "20": {
+      "abandonos_alcanzados_pct": 31.1,
+      "lift": 1.56
+    },
+    "30": {
+      "abandonos_alcanzados_pct": 43.6,
+      "lift": 1.45
+    },
+    "50": {
+      "abandonos_alcanzados_pct": 70.7,
+      "lift": 1.41
+    }
+  },
+  "perfil_segmentos": [
+    {
+      "segmento": "Campeones",
+      "clientes": 351,
+      "recencia_dias": 12.0,
+      "frecuencia": 9.0,
+      "gasto_mediano": 3364.44,
+      "tasa_abandono": 0.048,
+      "% de clientes": 13.24,
+      "% de ventas": 57.205
+    },
+    {
+      "segmento": "Recientes",
+      "clientes": 387,
+      "recencia_dias": 14.0,
+      "frecuencia": 2.0,
+      "gasto_mediano": 566.59,
+      "tasa_abandono": 0.413,
+      "% de clientes": 14.598,
+      "% de ventas": 6.642
+    },
+    {
+      "segmento": "En riesgo",
+      "clientes": 769,
+      "recencia_dias": 69.0,
+      "frecuencia": 3.0,
+      "gasto_mediano": 1045.38,
+      "tasa_abandono": 0.293,
+      "% de clientes": 29.008,
+      "% de ventas": 28.211
+    },
+    {
+      "segmento": "Dormidos",
+      "clientes": 1144,
+      "recencia_dias": 148.0,
+      "frecuencia": 1.0,
+      "gasto_mediano": 246.975,
+      "tasa_abandono": 0.605,
+      "% de clientes": 43.154,
+      "% de ventas": 7.942
+    }
+  ],
+  "importancia": {
+    "Recencia (días)": 0.0474,
+    "Gasto total (£)": 0.0465,
+    "Frecuencia (pedidos)": 0.0284
+  }
+}

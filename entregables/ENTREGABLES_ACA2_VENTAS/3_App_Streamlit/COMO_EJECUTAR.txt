@@ -1,0 +1,20 @@
+App Streamlit · ACA 2 Ventas (abandono de clientes con GRU, LSTM y Transformer)
+
+Contenido
+  app.py            interfaz Streamlit
+  utils/            scripts auxiliares (preprocesamiento, modelos, inferencia, base de datos)
+  modelos/          pesos de las redes (.pt), escalador.json, Random Forest del ACA 1 y metricas.json
+  data/ventas.db    base SQLite (transacciones, clientes, series semanales, historial de predicciones)
+  aca1/             modelo y métricas originales del ACA 1 (referencia de comparación)
+  figuras/          gráficas que muestra la pestaña Desempeño
+
+Ejecutar (Python 3.12, desde esta carpeta)
+  python -m venv .venv
+  .venv\Scripts\python -m pip install -r requirements.txt
+  .venv\Scripts\streamlit run app.py
+
+Carga del modelo: app.py lee los pesos de modelos/*.pt con utils/modelos.cargar() y aplica el mismo
+preprocesamiento del notebook (utils/secuencias.py + modelos/escalador.json). No hay que entrenar nada.
+
+App en línea: https://aca2-abandono-clientes-dl-juan-angel-tuqs2bahdtmtheu3bhrzfa.streamlit.app/
+Repositorio:  https://github.com/leiderpq5521-creator/ACA2-Abandono-Clientes-DL-Juan-Angel

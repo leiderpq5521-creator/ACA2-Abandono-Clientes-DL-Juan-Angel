@@ -3,9 +3,10 @@ Abandono de clientes con secuencias semanales: GRU, LSTM y Transformer vs. Rando
 Integrantes: Juan Guillermo Angel Jaramillo · Luis Bernardo Correa Restrepo · María Alejandra Manga Betancourt
 Docente: Hamilton Rivera Flor
 
-Contenido:
-1. ACA2_Deep_Learning_Ventas.ipynb – notebook ejecutado (SQL, EDA, pipeline, redes, evaluación)
-2. Poster_ACA2_Ventas_DL.pdf – póster A3 con enlaces clicables (poster.html es su fuente)
-3. app.py + requirements.txt – app Streamlit (requiere utils/, modelos/ y data/ del repositorio)
-4. Guion_Video_3-5min.md – guion del video (video: ver enlace en el póster)
-README.md – resultados, instrucciones de ejecución y despliegue
+Entregables oficiales (Sección 4 del enunciado)
+1_Notebook/       1. Notebook de Jupyter ejecutado: preprocesamiento, redes, entrenamiento, curvas y evaluación.
+                     Para re-ejecutarlo, clonar el repositorio (necesita utils/, aca1/ y data/).
+2_Poster/         2. Póster tipo infografía (PDF A3, 1 página, con enlaces a la app, el video y el repositorio).
+3_App_Streamlit/  3. App interactiva: app.py, scripts auxiliares, modelos, requirements.txt e instrucciones
+                     (COMO_EJECUTAR.txt y README.md).
+                  4. Video de sustentación: se entrega por separado.

@@ -1,44 +1,109 @@
-"""Reúne en entregables/ENTREGABLES_ACA2_VENTAS/ los archivos que se entregan (misma estructura que el ACA 1).
+"""Arma entregables/ENTREGABLES_ACA2_VENTAS/ según la SECCIÓN 4 «Entregables Oficiales del Proyecto»
+del enunciado ACA_2_Aprendizaje_Automatico_CUN:
+
+  1_Notebook/        notebook ejecutado (preprocesamiento, redes, entrenamiento, curvas y evaluación)
+  2_Poster/          póster tipo infografía en PDF (A3, 1 página, enlaces clicables)
+  3_App_Streamlit/   app.py, scripts auxiliares (utils/), modelos, base SQLite, requirements e instrucciones
+  4_Video/           sólo si existe entregables/Video_Sustentacion_ACA2_Ventas.mp4
+
+También deja ENTREGABLES_ACA2_VENTAS.zip al lado de la carpeta, listo para subir.
 
 Uso:  python entregables/armar_entregables.py
 Ejecutar después de generar_poster.py y generar_documentos.py para que las copias lleven las cifras finales.
 """
 import shutil
+import sqlite3
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
-DEST = BASE / "entregables" / "ENTREGABLES_ACA2_VENTAS"
-ARCHIVOS = [
-    BASE / "ACA2_Deep_Learning_Ventas.ipynb",                 # 1. Notebook ejecutado
-    BASE / "entregables" / "Poster_ACA2_Ventas_DL.pdf",      # 2. Póster tipo infografía (A3, 1 página)
-    BASE / "entregables" / "poster.html",                    #    fuente HTML del póster
-    BASE / "app.py",                                         # 3. App Streamlit
-    BASE / "requirements.txt",                               #    dependencias de la app
-    BASE / "README.md",                                      #    instrucciones y resultados
-    BASE / "entregables" / "Guion_Video_3-5min.md",          # 4. Guion del video de sustentación
-]
-VIDEO = "Video_Sustentacion_ACA2_Ventas.mp4"                 # se copia si existe en entregables/
+ENT = BASE / "entregables"
+DEST = ENT / "ENTREGABLES_ACA2_VENTAS"
+VIDEO = ENT / "Video_Sustentacion_ACA2_Ventas.mp4"
+IGNORAR = shutil.ignore_patterns("__pycache__", "*.pyc", "_rapido", "raw", "*.db-wal", "*.db-shm", "ventas.db")
 
+
+def copiar(origen: Path, destino: Path) -> None:
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    if origen.is_dir():
+        shutil.copytree(origen, destino, ignore=IGNORAR, dirs_exist_ok=True)
+    else:
+        shutil.copy2(origen, destino)
+
+
+# Se borran los archivos de la versión anterior; las carpetas vacías que Windows tenga bloqueadas
+# (p. ej. abiertas en el Explorador) se dejan y se reutilizan.
 DEST.mkdir(parents=True, exist_ok=True)
-copiados = []
-for f in ARCHIVOS + [BASE / "entregables" / VIDEO]:
-    if f.exists():
-        shutil.copy2(f, DEST / f.name)
-        copiados.append(f.name)
-# poster.html usa rutas ../figuras/: en la copia se ajustan para que siga mostrando las imágenes
-html = DEST / "poster.html"
-if html.exists():
-    html.write_text(html.read_text(encoding="utf-8").replace('src="../figuras/', 'src="../../figuras/'), encoding="utf-8")
+for p in sorted(DEST.rglob("*"), key=lambda x: len(x.parts), reverse=True):
+    try:
+        p.rmdir() if p.is_dir() else p.unlink()
+    except OSError:
+        if not p.is_dir():
+            raise
+
+# 1. Notebook de Jupyter
+N1 = DEST / "1_Notebook"
+copiar(BASE / "ACA2_Deep_Learning_Ventas.ipynb", N1 / "ACA2_Deep_Learning_Ventas.ipynb")
+copiar(BASE / "requirements-notebook.txt", N1 / "requirements-notebook.txt")
+
+# 2. Póster tipo infografía
+copiar(ENT / "Poster_ACA2_Ventas_DL.pdf", DEST / "2_Poster" / "Poster_ACA2_Ventas_DL.pdf")
+
+# 3. App interactiva Streamlit (carpeta autocontenida: se ejecuta tal cual)
+N3 = DEST / "3_App_Streamlit"
+for f in ("app.py", "requirements.txt", "README.md"):
+    copiar(BASE / f, N3 / f)
+for d in ("utils", "modelos", "aca1", "data", "figuras"):
+    copiar(BASE / d, N3 / d)
+# La base se copia con la API de respaldo de SQLite (incluye lo pendiente en el WAL) y con el historial vacío
+src, dst = sqlite3.connect(BASE / "data" / "ventas.db"), sqlite3.connect(N3 / "data" / "ventas.db")
+src.backup(dst)
+src.close()
+dst.execute("DELETE FROM predicciones")
+dst.commit()
+dst.execute("PRAGMA journal_mode=DELETE")   # un solo archivo .db, sin -wal/-shm
+dst.execute("VACUUM")
+dst.close()
+(N3 / "COMO_EJECUTAR.txt").write_text(
+    "App Streamlit · ACA 2 Ventas (abandono de clientes con GRU, LSTM y Transformer)\n\n"
+    "Contenido\n"
+    "  app.py            interfaz Streamlit\n"
+    "  utils/            scripts auxiliares (preprocesamiento, modelos, inferencia, base de datos)\n"
+    "  modelos/          pesos de las redes (.pt), escalador.json, Random Forest del ACA 1 y metricas.json\n"
+    "  data/ventas.db    base SQLite (transacciones, clientes, series semanales, historial de predicciones)\n"
+    "  aca1/             modelo y métricas originales del ACA 1 (referencia de comparación)\n"
+    "  figuras/          gráficas que muestra la pestaña Desempeño\n\n"
+    "Ejecutar (Python 3.12, desde esta carpeta)\n"
+    "  python -m venv .venv\n"
+    "  .venv\\Scripts\\python -m pip install -r requirements.txt\n"
+    "  .venv\\Scripts\\streamlit run app.py\n\n"
+    "Carga del modelo: app.py lee los pesos de modelos/*.pt con utils/modelos.cargar() y aplica el mismo\n"
+    "preprocesamiento del notebook (utils/secuencias.py + modelos/escalador.json). No hay que entrenar nada.\n\n"
+    f"App en línea: {(ENT / 'enlace_app.txt').read_text(encoding='utf-8').strip()}\n"
+    f"Repositorio:  {(ENT / 'enlace_repo.txt').read_text(encoding='utf-8').strip()}\n", encoding="utf-8")
+
+# 4. Video de sustentación (sólo si ya existe)
+if VIDEO.exists():
+    copiar(VIDEO, DEST / "4_Video" / VIDEO.name)
+
 (DEST / "LEEME.txt").write_text(
     "ACA N° 2 – Aprendizaje Automático (CUN) · Pilar Ventas\n"
     "Abandono de clientes con secuencias semanales: GRU, LSTM y Transformer vs. Random Forest del ACA 1\n"
     "Integrantes: Juan Guillermo Angel Jaramillo · Luis Bernardo Correa Restrepo · María Alejandra Manga Betancourt\n"
     "Docente: Hamilton Rivera Flor\n\n"
-    "Contenido:\n"
-    "1. ACA2_Deep_Learning_Ventas.ipynb – notebook ejecutado (SQL, EDA, pipeline, redes, evaluación)\n"
-    "2. Poster_ACA2_Ventas_DL.pdf – póster A3 con enlaces clicables (poster.html es su fuente)\n"
-    "3. app.py + requirements.txt – app Streamlit (requiere utils/, modelos/ y data/ del repositorio)\n"
-    "4. Guion_Video_3-5min.md – guion del video" + (f"; {VIDEO} – video de sustentación\n" if VIDEO in copiados else
-                                                   " (video: ver enlace en el póster)\n") +
-    "README.md – resultados, instrucciones de ejecución y despliegue\n", encoding="utf-8")
-print(f"{DEST}\n" + "\n".join(f"  · {c}" for c in copiados + ["LEEME.txt"]))
+    "Entregables oficiales (Sección 4 del enunciado)\n"
+    "1_Notebook/       1. Notebook de Jupyter ejecutado: preprocesamiento, redes, entrenamiento, curvas y evaluación.\n"
+    "                     Para re-ejecutarlo, clonar el repositorio (necesita utils/, aca1/ y data/).\n"
+    "2_Poster/         2. Póster tipo infografía (PDF A3, 1 página, con enlaces a la app, el video y el repositorio).\n"
+    "3_App_Streamlit/  3. App interactiva: app.py, scripts auxiliares, modelos, requirements.txt e instrucciones\n"
+    "                     (COMO_EJECUTAR.txt y README.md).\n"
+    + ("4_Video/          4. Video de sustentación (3 a 5 min).\n" if VIDEO.exists()
+       else "                  4. Video de sustentación: se entrega por separado.\n"), encoding="utf-8")
+
+zip_base = ENT / DEST.name
+Path(f"{zip_base}.zip").unlink(missing_ok=True)
+shutil.make_archive(str(zip_base), "zip", root_dir=ENT, base_dir=DEST.name)
+
+for p in sorted(DEST.rglob("*")):
+    if p.is_file() and not any(s in p.parts for s in ("utils", "modelos", "aca1", "figuras")):
+        print(f"  {p.relative_to(DEST)}  ({p.stat().st_size / 1e6:.2f} MB)")
+print(f"{zip_base}.zip  ({Path(f'{zip_base}.zip').stat().st_size / 1e6:.1f} MB)")

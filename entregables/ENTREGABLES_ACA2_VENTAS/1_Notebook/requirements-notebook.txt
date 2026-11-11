@@ -1,0 +1,9 @@
+# Dependencias completas para reentrenar con el notebook
+-r requirements.txt
+pyreadr>=0.5
+matplotlib>=3.8
+seaborn>=0.13
+jupyter>=1.0
+nbconvert>=7
+ipykernel>=6
+pypdfium2>=4.0

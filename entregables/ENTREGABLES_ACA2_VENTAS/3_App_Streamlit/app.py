@@ -323,9 +323,28 @@ with tabs[2]:
             out = pd.DataFrame({"cliente": ids, "pedidos": est[:, 1].astype(int), "gasto_total": est[:, 2].round(2),
                                 "prob_abandono": probs})
             out["decision"] = [decision(p_, umbral) if not np.isnan(p_) else "sin pedidos" for p_ in probs]
+            filas_a_registrar = []
             for c, p_ in zip(ids, probs):
                 if not np.isnan(p_):
-                    registrar(f"lote:{nombre_lote}", c if isinstance(c, (int, np.integer)) else None, float(p_), str(c))
+                    cid = c if isinstance(c, (int, np.integer)) else None
+                    clave = hashlib.md5(f"lote:{nombre_lote}|{c}|{modelo_sel}|{umbral:.2f}".encode()).hexdigest()
+                    vistos = st.session_state.setdefault("registradas", set())
+                    if clave not in vistos:
+                        vistos.add(clave)
+                        dec = decision(p_, umbral)
+                        filas_a_registrar.append((pd.Timestamp.now().isoformat(timespec="seconds"),
+                                                  f"lote:{nombre_lote}", cid, modelo_sel, float(p_), float(umbral), dec))
+            if filas_a_registrar:
+                try:
+                    db.registrar_predicciones_lote(con, filas_a_registrar)
+                except sqlite3.Error:
+                    conexion.clear()
+                    con = conexion()
+                    try:
+                        db.registrar_predicciones_lote(con, filas_a_registrar)
+                    except sqlite3.Error:
+                        st.toast("No se pudo guardar el lote completo en el historial.", icon=":material/warning:")
+
             k1, k2, k3 = st.columns(3)
             k1.metric("Clientes", len(out))
             k2.metric("En riesgo de abandono", int((out.decision == "Abandono").sum()))
