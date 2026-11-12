@@ -50,11 +50,8 @@ def secuencia_desde_tabla(df: pd.DataFrame) -> np.ndarray:
     faltan = [c for c in BASE_CANALES if c not in df.columns]
     if faltan:
         raise ValueError(f"Faltan columnas: {', '.join(faltan)}")
-    # Extracción numérica optimizada evitando conversiones redundantes
-    mat = df[BASE_CANALES].to_numpy(dtype=np.float32, copy=True)
-    np.nan_to_num(mat, copy=False, nan=0.0)
-    np.clip(mat, a_min=0.0, a_max=None, out=mat)
-    x = mat[-N_SEMANAS:]
+    # to_numeric con errors="coerce": un texto o celda vacía en la tabla editable cuenta como 0 en vez de fallar
+    x = df[BASE_CANALES].apply(pd.to_numeric, errors="coerce").fillna(0).clip(lower=0).to_numpy(np.float32)[-N_SEMANAS:]
     base = np.zeros((N_SEMANAS, len(BASE_CANALES)), dtype=np.float32)
     base[N_SEMANAS - len(x):] = x
     return base

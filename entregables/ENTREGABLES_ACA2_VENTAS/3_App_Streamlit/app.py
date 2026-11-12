@@ -326,7 +326,8 @@ with tabs[2]:
             filas_a_registrar = []
             for c, p_ in zip(ids, probs):
                 if not np.isnan(p_):
-                    cid = c if isinstance(c, (int, np.integer)) else None
+                    # int(): sqlite3 guarda un np.int64 como BLOB y luego la tabla del historial no se puede mostrar
+                    cid = int(c) if isinstance(c, (int, np.integer)) else None
                     clave = hashlib.md5(f"lote:{nombre_lote}|{c}|{modelo_sel}|{umbral:.2f}".encode()).hexdigest()
                     vistos = st.session_state.setdefault("registradas", set())
                     if clave not in vistos:
