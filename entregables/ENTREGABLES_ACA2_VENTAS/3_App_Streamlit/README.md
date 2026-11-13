@@ -8,7 +8,7 @@
 
 **Docente:** Hamilton Rivera Flor · **Dataset:** UCI Online Retail (Chen, 2015) · **Continuación de:** ACA 1 (segmentación RFM + Random Forest)
 
-**App en línea:** https://aca2-abandono-clientes-dl-juan-angel-tuqs2bahdtmtheu3bhrzfa.streamlit.app/ · **Video:** https://drive.google.com/file/d/1T5lRPsd9uaFdSYd24i24M6I-1tvC1e1b/view?usp=sharing
+**App en línea:** https://aca2-abandono-clientes-dl-juan-angel-tuqs2bahdtmtheu3bhrzfa.streamlit.app/ · **Video:** https://drive.google.com/file/d/1qFQ4uO11vAPHjC0xeIntsRwZso21c5F7/view?usp=sharing
 
 ## Resultados (conjunto de prueba: los mismos 663 clientes del ACA 1)
 | Modelo | Parámetros | ROC-AUC val | Accuracy | ROC-AUC | PR-AUC | F1 | Recall | Precisión | ΔAUC vs RF [IC 95 %] |

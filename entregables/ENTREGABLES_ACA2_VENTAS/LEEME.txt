@@ -10,4 +10,4 @@ Entregables oficiales (Sección 4 del enunciado)
                      y Poster_ACA2_Ventas_DL.html, la misma versión en HTML con las figuras incrustadas.
 3_App_Streamlit/  3. App interactiva: app.py, scripts auxiliares, modelos, requirements.txt e instrucciones
                      (COMO_EJECUTAR.txt y README.md).
-                  4. Video de sustentación: se entrega por separado.
+4_Video/          4. Video de sustentación (3 a 5 min).
